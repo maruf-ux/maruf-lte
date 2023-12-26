@@ -17,54 +17,56 @@ class UserController extends Controller
         return view('pages.index');
     }
 
-    public function login()
+    public function login(): View
     {
         return view('pages.sign-in');
     }
 
-    public function loginPost(Request $request)
+    public function loginPost(Request $request): RedirectResponse
     {
         $request->validate([
             'email' => 'required',
             'password' => 'required',
         ]);
-        $credentials = $request->only('email','password');
-        if(Auth::attempt($credentials)) {
+        $credentials = $request->only('email', 'password');
+        if (Auth::attempt($credentials)) {
             return redirect('dashboard');
         }
         return redirect('/sign-in');
     }
 
-    public function register()
+    public function register(): View
     {
         return view('pages.registration');
     }
 
-    public function registerPost(Request $request)
+    public function registerPost(Request $request): RedirectResponse
     {
         $request->validate([
             'name' => 'required',
             'email' => 'required',
             'password' => 'required',
         ]);
-        $data =$request->all();
+        $data = $request->all();
         $check = $this->create($data);
         return redirect('sign-in');
     }
 
-    public function create(array $data){
+    public function create(array $data): array
+    {
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
-            'password' =>Hash::make( $data['password'])
+            'password' => Hash::make($data['password'])
         ]);
     }
-public function dashboard(){
-    if(Auth::check()){
-        return view('pages.dashboard');
+    public function dashboard(): RedirectResponse|View
+    {
+        if (Auth::check()) {
+            return view('pages.dashboard');
+        }
+        return redirect('sign-in');
     }
-    return redirect('sign-in');
-}
     public function logout(): RedirectResponse
     {
         Session::flush();
