@@ -17,7 +17,7 @@ class UserController extends Controller
         return view('pages.index');
     }
 
-    public function login()
+    public function login(): View
     {
         return view('pages.sign-in');
     }
@@ -67,12 +67,12 @@ class UserController extends Controller
         }
     }
 
-    public function register()
+    public function register(): View
     {
         return view('pages.registration');
     }
 
-    public function registerPost(Request $request)
+    public function registerPost(Request $request): RedirectResponse
     {
         $request->validate([
             'name' => 'required',
