@@ -22,17 +22,49 @@ class UserController extends Controller
         return view('pages.sign-in');
     }
 
+    // public function loginPost(Request $request)
+    // {
+    //     $request->validate([
+    //         'email' => 'required',
+    //         'password' => 'required',
+    //     ]);
+    //     $credentials = $request->only('email','password');
+    //     if(Auth::attempt($credentials)) {
+    //         return redirect('dashboard');
+    //     }
+    //     return redirect('/sign-in');
+    // }
     public function loginPost(Request $request)
     {
         $request->validate([
             'email' => 'required',
             'password' => 'required',
         ]);
-        $credentials = $request->only('email','password');
-        if(Auth::attempt($credentials)) {
-            return redirect('dashboard');
+        try {
+
+            $adminUser = User::where('email', $request->email)->first();
+
+            if (!empty($adminUser)) {
+                if (Hash::check($request->password, $adminUser->password)) {
+
+                    $user_data = [
+                        "id" => $adminUser->id,
+                        "name" => $adminUser->name,
+                        "email" => $adminUser->email,
+                    ];
+
+                    session()->put('logged_session_data', $user_data);
+
+                    return redirect()->intended(url('/dashboard'));
+                } else {
+                    return redirect(url('/sign-in'))->withInput()->with('error', 'Wrong password');
+                }
+            } else {
+                return redirect(url('/sign-in'))->withInput()->with('error', 'Please give the valid information');
+            }
+        } catch (\Throwable $th) {
+            return redirect(url('/sign-in'))->with('error', $th->getMessage());
         }
-        return redirect('/sign-in');
     }
 
     public function register()
@@ -47,24 +79,24 @@ class UserController extends Controller
             'email' => 'required',
             'password' => 'required',
         ]);
-        $data =$request->all();
+        $data = $request->all();
         $check = $this->create($data);
         return redirect('sign-in');
     }
 
-    public function create(array $data){
+    public function create(array $data)
+    {
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
-            'password' =>Hash::make( $data['password'])
+            'password' => Hash::make($data['password'])
         ]);
     }
-public function dashboard(){
-    if(Auth::check()){
+    public function dashboard()
+    {
         return view('pages.dashboard');
     }
-    return redirect('sign-in');
-}
+
     public function logout(): RedirectResponse
     {
         Session::flush();

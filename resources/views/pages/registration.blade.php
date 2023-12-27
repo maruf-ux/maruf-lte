@@ -40,6 +40,3 @@
     </main>
 @endsection
 
-@section('custom-js')
-<script src="assets/dist/js/bootstrap.bundle.min.js"></script>
-@endsection
