@@ -36,10 +36,16 @@ class UserController extends Controller
     // }
     public function loginPost(Request $request)
     {
-        $request->validate([
-            'email' => 'required',
-            'password' => 'required',
-        ]);
+        $request->validate(
+            [
+                'email' => 'required',
+                'password' => 'required',
+            ],
+            [
+                'email.required' => 'Please put your email address',
+                'password.required' => 'Please put your email address',
+            ]
+        );
         try {
 
             $adminUser = User::where('email', $request->email)->first();
@@ -54,8 +60,8 @@ class UserController extends Controller
                     ];
 
                     session()->put('logged_session_data', $user_data);
-
                     return redirect()->intended(url('/dashboard'));
+
                 } else {
                     return redirect(url('/sign-in'))->withInput()->with('error', 'Wrong password');
                 }
@@ -74,14 +80,28 @@ class UserController extends Controller
 
     public function registerPost(Request $request): RedirectResponse
     {
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required',
-            'password' => 'required',
-        ]);
+        $request->validate(
+            [
+                'name' => 'required',
+                'email' => 'required',
+                'password' => 'required',
+            ],
+            [
+                'name.required' => 'The name is must Have , You must put it continue the form',
+                'email.required' => 'The name is must Have , You must put it continue the form',
+                'password.required' => 'The name is must Have , You must put it continue the form'
+            ]
+        );
         $data = $request->all();
         $check = $this->create($data);
-        return redirect('sign-in');
+        if ($check) {
+            Session::flash('success', 'Successfully Register');
+            return redirect('sign-in');
+        } else {
+            Session::flash('error', 'Registration Failed');
+            return redirect('register');
+        }
+
     }
 
     public function create(array $data)

@@ -11,15 +11,37 @@
             @csrf
             <img class="mb-4" src="{{ asset('assets/brand/bootstrap-logo.svg') }}" alt="" width="72"
                 height="57" />
+            <div class="row">{{--  flash message display --}}
+                <div class="col-md-12">
+                    @if (Session::has('success'))
+                        <div class="alert alert-success">
+                            <strong>Success!</strong> {{ session()->get('success') }}
+                        </div>
+                    @endif
+                    @if (Session::has('error'))
+                        <div class="alert alert-danger">
+                            <strong>Error! </strong> {{ session()->get('error') }}
+                        </div>
+                    @endif
+                </div>
+            </div>
+            {{--  flash message display --}}
             <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
 
             <div class="form-floating">
                 <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com"
                     name="email" />
+                @error('email')
+                    <div class="error">{{ $message }}</div>
+                @enderror
                 <label for="floatingInput">Email address</label>
+
             </div>
             <div class="form-floating">
                 <input type="password" class="form-control" id="floatingPassword" placeholder="Password" name="password" />
+                @error('email')
+                    <div class="error">{{ $message }}</div>
+                @enderror
                 <label for="floatingPassword">Password</label>
             </div>
 
@@ -35,20 +57,5 @@
             <p class="mt-5 mb-3 text-body-secondary">&copy; 2017–2023</p>
         </form>
 
-
-        <div class="row">
-            <div class="col-md-12">
-                @if (session()->has('success'))
-                    <div class="alert alert-success">
-                        <strong>Success!</strong> {{ session()->get('success') }}
-                    </div>
-                @endif
-                @if (session()->has('error'))
-                    <div class="alert alert-danger">
-                        <strong>Error! </strong> {{ session()->get('error') }}
-                    </div>
-                @endif
-            </div>
-        </div>
     </main>
 @endsection
